@@ -1,0 +1,7 @@
+{
+  "name": "cocktail-machine",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "vue"
+}
