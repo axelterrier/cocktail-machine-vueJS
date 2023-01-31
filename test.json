@@ -1,0 +1,16 @@
+{
+    "iss": "https://accounts.google.com",
+    "nbf": 1675171536,
+    "aud": "162549628141-g4qv6miv9r54d52vac79f57mveeltmjf.apps.googleusercontent.com",
+    "sub": "109664924393266077378",
+    "email": "axelterrier12071999@gmail.com",
+    "email_verified": true,
+    "azp": "162549628141-g4qv6miv9r54d52vac79f57mveeltmjf.apps.googleusercontent.com",
+    "name": "Axel Terrier",
+    "picture": "https://lh3.googleusercontent.com/a/AEdFTp6xh18sTmrb5x-ixpHRxjEJbkR0g5jiVeyr3AUycg=s96-c",
+    "given_name": "Axel",
+    "family_name": "Terrier",
+    "iat": 1675171836,
+    "exp": 1675175436,
+    "jti": "73d6c58a7153bf54efae9814c42e30b7ef1605da"
+}

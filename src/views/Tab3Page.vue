@@ -1,23 +1,23 @@
-<template>
-  <ion-page>
-    <ion-header>
-      <ion-toolbar>
-        <ion-title>Tab 3</ion-title>
-      </ion-toolbar>
-    </ion-header>
-    <ion-content :fullscreen="true">
-      <ion-header collapse="condense">
-        <ion-toolbar>
-          <ion-title size="large">Tab 3</ion-title>
-        </ion-toolbar>
-      </ion-header>
+<script>
+import { decodeCredential } from 'vue3-google-login'
+import { GoogleLogin } from 'vue3-google-login'
+import { googleLogout } from "vue3-google-login"
+import router from '@/router'
 
-      <ExploreContainer name="Tab 3 page" />
-    </ion-content>
-  </ion-page>
-</template>
+export default {
 
-<script setup lang="ts">
-import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent } from '@ionic/vue';
-import ExploreContainer from '@/components/ExploreContainer.vue';
+  data() {
+    return {
+      logout() {
+        googleLogout()
+        console.log("deconnecté")
+        router.push('/tabs/tab2')
+      }
+    }
+  }
+
+}
 </script>
+<template>
+  <h1 @click="logout">Se déconnecter</h1>
+</template>

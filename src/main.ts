@@ -20,12 +20,17 @@ import '@ionic/vue/css/text-transformation.css';
 import '@ionic/vue/css/flex-utils.css';
 import '@ionic/vue/css/display.css';
 
+import vue3GoogleLogin from 'vue3-google-login';
+
 /* Theme variables */
 import './theme/variables.css';
 
 const app = createApp(App)
   .use(IonicVue)
-  .use(router);
+  .use(router)
+  .use(vue3GoogleLogin, {
+    clientId: '162549628141-g4qv6miv9r54d52vac79f57mveeltmjf.apps.googleusercontent.com'
+  });
   
 router.isReady().then(() => {
   app.mount('#app');
