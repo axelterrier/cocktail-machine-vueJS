@@ -1,16 +1,26 @@
-{
-    "iss": "https://accounts.google.com",
-    "nbf": 1675171536,
-    "aud": "162549628141-g4qv6miv9r54d52vac79f57mveeltmjf.apps.googleusercontent.com",
-    "sub": "109664924393266077378",
-    "email": "axelterrier12071999@gmail.com",
-    "email_verified": true,
-    "azp": "162549628141-g4qv6miv9r54d52vac79f57mveeltmjf.apps.googleusercontent.com",
-    "name": "Axel Terrier",
-    "picture": "https://lh3.googleusercontent.com/a/AEdFTp6xh18sTmrb5x-ixpHRxjEJbkR0g5jiVeyr3AUycg=s96-c",
-    "given_name": "Axel",
-    "family_name": "Terrier",
-    "iat": 1675171836,
-    "exp": 1675175436,
-    "jti": "73d6c58a7153bf54efae9814c42e30b7ef1605da"
-}
+[
+    {
+        "ID_Ingredient": 0,
+        "Ingredient_Name": "Absinthe",
+        "Viscosite": 1,
+        "Taux_Alcool": 60,
+        "Est_Disponible": 2,
+        "Image_Url": {
+            "type": "Buffer",
+            "data": []
+        },
+        "Pompe": null
+    },
+    {
+        "ID_Ingredient": 1,
+        "Ingredient_Name": "Amaretto",
+        "Viscosite": 1,
+        "Taux_Alcool": 18,
+        "Est_Disponible": 0,
+        "Image_Url": {
+            "type": "Buffer",
+            "data": []
+        },
+        "Pompe": null
+    }
+]

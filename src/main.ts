@@ -1,6 +1,6 @@
 import { createApp } from 'vue'
 import App from './App.vue'
-import router from './router';
+import router from './router'
 
 import { IonicVue } from '@ionic/vue';
 
@@ -24,14 +24,20 @@ import vue3GoogleLogin from 'vue3-google-login';
 
 /* Theme variables */
 import './theme/variables.css';
+import storeClient from './store/store'
+import axios from 'axios';
+
+axios.defaults.baseURL = 'http://localhost:8888/api/V1';
+
 
 const app = createApp(App)
-  .use(IonicVue)
-  .use(router)
-  .use(vue3GoogleLogin, {
-    clientId: '162549628141-g4qv6miv9r54d52vac79f57mveeltmjf.apps.googleusercontent.com'
-  });
-  
+.use(IonicVue)
+.use(router)
+.use(storeClient)
+.use(vue3GoogleLogin, {
+clientId: '162549628141-g4qv6miv9r54d52vac79f57mveeltmjf.apps.googleusercontent.com'
+});
+
 router.isReady().then(() => {
-  app.mount('#app');
+app.mount('#app');
 });
