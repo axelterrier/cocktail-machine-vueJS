@@ -1,136 +1,139 @@
 <template>
-  <div class="container">
-    <h1 class="title">Connectez-vous avec votre compte Google</h1>
-    <GoogleLogin :callback="callback" class="button" />
-  </div>
+    <ion-page>
+        <ion-header>
+            <ion-toolbar>
+                <ion-title>
+                    Connexion
+                </ion-title>
+            </ion-toolbar>
+        </ion-header>
+        <ion-content class="ion-padding">
+            <ion-list>
+                <ion-item>
+                    <ion-icon :icon="mailOutline" slot="start" style="vertical-align: middle;"></ion-icon>
+                    <ion-label position="floating">Adresse email</ion-label>
+                    <ion-input type="email" v-model="email" @input="email = $event.target.value"></ion-input>
+                </ion-item>
+                <ion-item>
+                    <ion-icon :icon="lockOpenOutline" slot="start" style="vertical-align: middle;"></ion-icon>
+                    <ion-label position="floating">Mot de passe</ion-label>
+                    <ion-input v-model="password" @input="password = $event.target.value"
+                        :type="showPassword ? 'text' : 'password'"></ion-input>
+                    <ion-icon :icon="showPassword ? eye : eyeOff" slot="end"
+                        @click="showPassword = !showPassword"></ion-icon>
+
+                </ion-item>
+            </ion-list>
+            <ion-button expand="block" @click="login">Se connecter</ion-button>
+            <ion-label class="ion-text-center" style="margin-top: 1em">ou</ion-label>
+            <ion-button expand="block" @click="goToRegister">S'inscrire</ion-button>
+        </ion-content>
+    </ion-page>
 </template>
-<style scoped>
-.container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
 
-.title {
-  margin-bottom: 1rem;
-  font-size: 18px;
-  font-weight: bold;
-}
-
-.button {
-  width: 200px;
-  height: 40px;
-  border-radius: 50px;
-  background-color: white;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-  font-weight: bold;
-  border: none;
-  margin-top: 20px;
-  cursor: pointer;
-  box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.1);
-  position: relative;
-}
-
-.button:before {
-  content: "";
-  background-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0MDAgNDAwIj48cGF0aCBmaWxsPSIjMjM5N2ZmIiBkPSJNMCAwaDQwMHY0MDBIMHoiLz48cGF0aCBkPSJNMTYwLjEgMjA1LjRjLTYuMiAwLTExLjQgNS4yLTExLjQgMTEuNHYxNy44YzAgNi4yIDUuMiAxMS40IDExLjQgMTEuNGgxNzIuNGM2LjIgMCAxMS40LTUuMiAxMS40LTExLjR2LTE3LjhjMC02LjItNS4yLTExLjQtMTEuNC0xMS40aC0xNzIuNHptMTYwLjEtODAuN2gtMzQ0LjJ2MTYxLjloMzQ0LjJ6IiBmaWxsPSIjMjM5N2ZmIi8+PC9zdmc+);
-  background-repeat: no-repeat;
-  background-size: contain;
-  width: 24px;
-  height: 24px;
-  position: absolute;
-  left: 12px;
-  top: 8px;
-}
-
-.button span {
-  color: #2397ff;
-  margin-left: 36px;
-}
-</style>
 <script>
-import { decodeCredential } from 'vue3-google-login'
-import { GoogleLogin } from 'vue3-google-login'
-import router from '@/router'
 import axios from 'axios';
+import { useRouter } from 'vue-router';
+
+import {
+    alertController,
+    IonPage,
+    IonIcon,
+} from '@ionic/vue';
+
+import {
+    mailOutline,
+    eye,
+    eyeOff,
+    lockOpenOutline,
+} from "ionicons/icons"
 
 export default {
-  components: {
-    GoogleLogin
-  },
-  data() {
-    return {
-      age: '',
-      poids: '',
-      taille: '',
-      userData: {},
-      callback: (response) => {
-        const userData = decodeCredential(response.credential)
-        console.log("Handle the userData : \n", userData)
-        router.push('/tabs/tab3')
-        this.$store.dispatch('setUserData', {
-          prenom: userData.given_name,
-          nom: userData.family_name,
-          photo_url: userData.picture,
-          email: userData.email
-        });
-        this.submitData().then(() => {
-          this.retrieveData();
-        });
-      }
-    }
-  },
-
-  methods: {
-    async submitData() {
-      const { prenom, nom, photo_url, email } = this.$store.state.userData;
-      try {
-        const response = await axios.post('http://localhost:8888/api/V1/utilisateurs', {
-          prenom,
-          nom,
-          photo_url,
-          email,
-          age: this.age,
-          poids: this.poids,
-          taille: this.taille
-        });
-        console.log(response.data);
-      } catch (error) {
-        console.error(error);
-      }
+    components: {
+        IonPage,
+        IonIcon,
     },
-    async retrieveData() {
-  if (this.$store.state.userData) {
-    try {
-      const response = await axios.get(`http://localhost:8888/api/V1/utilisateurs/${this.$store.state.userData.email}`)
-      console.log("email : " + this.$store.state.userData.email)
-      this.userData = response.data
-      this.nom = response.data.nom
-      this.prenom = response.data.prenom
-      this.photo_url = response.data.photo_url
-      this.age = response.data.age
-      this.poids = response.data.poids
-      this.taille = response.data.taille
-      this.$store.commit('setUserData', {
-        prenom: this.prenom,
-        nom: this.nom,
-        photo_url: this.photo_url,
-        age: this.age,
-        poids: this.poids,
-        taille: this.taille
-      })
-      console.log("info récupérées : " + this.age)
-    } catch (error) {
-      console.error(error)
-    }
-  } else {
-    console.log("pas dans le store")
-  }
-}
+    setup() {
+        const router = useRouter();
+        return { router };
+    },
+    data() {
+        return {
+            email: '',
+            password: '',
+            lockOpenOutline,
+            mailOutline,
+            eye,
+            eyeOff,
+            showPassword: false,
+            showConfirmPassword: false
+        }
+    },
+    methods: {
 
-  }
+        async login() {
+
+            console.log("email : " + this.email)
+            console.log("mpd : " + this.password)
+
+            if (!this.email || !this.password) {
+                const presentAlert = async () => {
+                    const alert = await alertController.create({
+                        header: 'Champs non remplis',
+                        subHeader: 'Important message',
+                        message: 'Tous les champs sont necessaires',
+                        buttons: ['OK'],
+                    });
+
+                    await alert.present();
+                };
+                presentAlert()
+                return
+            }
+
+            const response = await axios.post('http://localhost:8888/api/V1/login', {
+                email: this.email,
+                password: this.password,
+            });
+
+            const emailCheckResponse = await axios.get(`http://localhost:8888/api/V1/utilisateurs/${this.email}`);
+
+            const { token, error } = response.data;
+            console.log(response)
+            if (error) {
+                if (error === "Mot de passe incorrect.") {
+                    const presentAlert = async () => {
+                        const alert = await alertController.create({
+                            header: 'Erreur',
+                            subHeader: 'Important message',
+                            message: 'Le mot de passe est incorrect',
+                            buttons: ['OK'],
+                        });
+                        await alert.present();
+                    };
+                    presentAlert();
+                } else if (emailCheckResponse.data.error === "Aucun utilisateur trouvé avec cet email.") {
+                    const presentAlert = async () => {
+                        const alert = await alertController.create({
+                            header: 'Erreur',
+                            subHeader: 'Important message',
+                            message: 'Aucun utilisateur trouvé avec cet email',
+                            buttons: ['OK'],
+                        });
+                        await alert.present();
+                    };
+                    presentAlert();
+                } else {
+                    console.log(`Token : ${token}`);
+                    // Stocker le token dans le localStorage pour une utilisation ultérieure
+                    localStorage.setItem('token', token);
+                    //REDIRECT
+                }
+            }
+        },
+        goToRegister() {
+            this.router.push({ path: '/' });
+        }
+    }
 }
 </script>

@@ -2,157 +2,80 @@
   <ion-page>
     <ion-header>
       <ion-toolbar>
-        <ion-title>Profil</ion-title>
+        <ion-title>
+          Paramètres
+        </ion-title>
       </ion-toolbar>
     </ion-header>
-    <ion-content class="ion-padding ion-text-center">
-      <div class="profile-header">
-        <img :src="userData.photo_url" class="profile- picture" />
-        <h2 class="ion-text-uppercase">{{ userData.prenom }} {{ userData.nom }}</h2>
-        <p>{{ userData.email }}</p>
-      </div>
-      <form>
-        <ion-item>
-          <ion-label position="stacked">Prénom</ion-label>
-          <ion-input type="text" v-model="userData.prenom"></ion-input>
+
+    <ion-content>
+      <ion-list>
+        <ion-item @click="goToEditProfilePage">
+          <ion-label>Modifier mon profil</ion-label>
+          <ion-icon :icon="personCircleOutline" slot="start"></ion-icon>
         </ion-item>
         <ion-item>
-          <ion-label position="stacked">Nom</ion-label>
-          <ion-input type="text" v-model="userData.nom"></ion-input>
+          <ion-label>Thème de l'application</ion-label>
+          <ion-toggle v-model="darkTheme" @click="changeTheme" />
+          <ion-icon :icon="contrast" slot="start"></ion-icon>
         </ion-item>
-        <ion-item>
-          <ion-label position="stacked">Age</ion-label>
-          <ion-input type="number" v-model="userData.age"></ion-input>
+        <ion-item @click="changeLanguage">
+          <ion-icon :icon="earthOutline" slot="start"></ion-icon>
+          <ion-label>Langue de l'application</ion-label>
+
         </ion-item>
-        <ion-item>
-          <ion-label position="stacked">Poids (en kg)</ion-label>
-          <ion-input type="number" v-model="userData.poids"></ion-input>
+        <ion-item @click="goToStatisticsPage">
+          <ion-icon :icon="statsChartOutline" slot="start"></ion-icon>
+          <ion-label>Statistiques</ion-label>
         </ion-item>
-        <ion-item>
-          <ion-label position="stacked">Taille (en cm)</ion-label>
-          <ion-input type="number" v-model="userData.taille"></ion-input>
-        </ion-item>
-      </form>
-      <ion-button @click="saveChanges" color="primary">Enregistrer les modifications</ion-button>
-      <ion-button @click="logout" color="dark">Déconnexion</ion-button>
+      </ion-list>
     </ion-content>
   </ion-page>
 </template>
 
-
 <script>
 import { defineComponent } from 'vue';
-import { mapState, mapActions } from 'vuex';
-import { googleLogout } from 'vue3-google-login';
-import { useRouter } from 'vue-router';
-import axios from 'axios';
 import {
-  IonContent,
-  IonHeader,
   IonPage,
-  IonTitle,
-  IonToolbar,
-  IonInput,
-  IonLabel,
-  IonItem,
-  IonButton
+  IonIcon,
 } from '@ionic/vue';
+import {
+  earthOutline,
+  contrast,
+  personCircleOutline,
+  statsChartOutline,
+} from "ionicons/icons"
 
-export default defineComponent({
+
+export default {
   components: {
-    IonContent,
-    IonHeader,
     IonPage,
-    IonTitle,
-    IonToolbar,
-    IonInput,
-    IonLabel,
-    IonItem,
-    IonButton,
-  },
-  async created() {
-    try {
-      const response = await axios.get(`http://localhost:8888/api/V1/utilisateurs/${this.userData.email}`)
-      this.userData = response.data
-      console.log("email : " + this.userData.email)
-    } catch (error) {
-      console.error(error)
-    }
-  },
-  computed: {
-    ...mapState({
-      userData: state => state.userData
-    })
-  },
-  methods: {
-    ...mapActions({
-      updateUserInfo: 'updateUserInfo'
-    }),
-    logout() {
-      googleLogout()
-      this.$router.push('/')
-    },
-    async saveChanges() {
-      try {
-        const response = await axios.put(`http://localhost:8888/api/V1/utilisateurs/${this.userData.email}`, this.userData)
-        console.log("Données mises à jour : ", response.data)
-      } catch (error) {
-        console.error(error)
-      }
-    },
-    async retrieveData() {
-      if (this.$store.state.userData) {
-        try {
-          const response = await axios.get(`http://localhost:8888/api/V1/utilisateurs/${this.$store.state.userData.email}`)
-          this.userData = response.data[0]
-          this.updateUserInfo(this.userData)
-          this.nom = response.data[0].nom
-          this.prenom = response.data[0].prenom
-          this.photo_url = response.data[0].photo_url
-          this.age = response.data[0].age
-          this.poids = response.data[0].poids
-          this.taille = response.data[0].taille
-          console.log("info récupérées : " + response.data[0].age)
-        } catch (error) {
-          console.error(error)
-        }
-      } else {
-        console.log("pas dans le store")
-      }
-    }
-
+    IonIcon,
   },
   setup() {
-    const router = useRouter()
-    return { router }
-  }
-});
+    return {
+      earthOutline,
+      contrast,
+      personCircleOutline,
+      statsChartOutline,
+    }
+  },
+  data() {
+    return {
+      darkTheme: false,
+    };
+  },
+  computed: {
+    themeClass() {
+      return this.darkTheme ? 'dark-theme' : '';
+    },
+  },
+  methods: {
+    changeTheme() {
+      this.darkTheme = !this.darkTheme;
+      console.log(this.darkTheme)
+      document.body.setAttribute('prefers-color-scheme', 'dark')
+    },
+  },
+};
 </script>
-
-<style scoped>
-.profile-header {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.profile-picture {
-  border-radius: 50%;
-  width: 200px;
-  height: 200px;
-  margin-bottom: 20px;
-  object-fit: cover;
-}
-
-h2 {
-  font-weight: bold;
-  margin-bottom: 10px;
-  color: #333;
-}
-
-p {
-  color: #333;
-  font-size: 16px;
-  text-align: left;
-}
-</style>

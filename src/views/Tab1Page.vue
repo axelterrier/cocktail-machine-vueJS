@@ -84,6 +84,7 @@ export default defineComponent({
       loading: true,
       searchQuery: '',
       activeCount: 0,
+      availableIngredients: [],
     };
   },
   setup() {
@@ -96,6 +97,9 @@ export default defineComponent({
       this.ingredients = response.data
       this.loading = false;
       this.activeCount = this.ingredients.reduce((count, ingredient) => count + (ingredient.Est_Disponible ? 1 : 0), 0);
+      this.availableIngredients = this.ingredients
+      .filter(ingredient => ingredient.Est_Disponible)
+      .map(ingredient => ingredient.ID_Ingredient)
     } catch (error) {
       console.error(error)
     }
@@ -111,17 +115,15 @@ export default defineComponent({
     async updateAvailability(ingredient) {
       ingredient.Est_Disponible = ingredient.Est_Disponible === 1 ? 0 : 1;
       this.activeCount += ingredient.Est_Disponible === 1 ? 1 : -1;
-      if (this.activeCount >= 10) {
-        const alert = await alertController.create({
-          header: 'Alerte',
-          message: 'Le nombre maximal d\'ingrédients sélectionnés est atteint !',
-          buttons: ['OK']
-        });
-        await alert.present();
-        return;
+      if (ingredient.Est_Disponible === 1) {
+        this.availableIngredients.push(ingredient.ID_Ingredient)
+      } else {
+        const index = this.availableIngredients.indexOf(ingredient.ID_Ingredient)
+        if (index > -1) {
+          this.availableIngredients.splice(index, 1)
+        }
       }
-
-      console.log("Nb d'ingrédient : " + this.activeCount)
+      console.log("Ingr Dispo" + this.availableIngredients)
       await this.saveChanges(ingredient);
       await this.updateCocktails()
     },
@@ -130,7 +132,6 @@ export default defineComponent({
         const response = await axios.put(`http://localhost:8888/api/V1/ingredients/${ingredient.ID_Ingredient}`, {
           Est_Disponible: ingredient.Est_Disponible
         });
-        console.log("Données mises à jour : ", response.data)
         // mettre à jour les données localement
         //this.ingredients = this.ingredients.map(i => i.ID_Ingredient === ingredient.ID_Ingredient ? { ...i, Est_Disponible: response.data.Est_Disponible } : i)
         //console.log("ingredients : " + this.ingredients)
@@ -139,9 +140,67 @@ export default defineComponent({
       }
     },
     async updateCocktails() {
-      const response = await axios.get('http://localhost:8888/api/V1/cocktailcomposition')
-      this.cocktails = response.data
-      //AJOUTER UPDATE COCKTAIL
+      try {
+        const response = await axios.get('http://localhost:8888/api/V1/cocktailcomposition')
+        this.cocktailcomposition = response.data
+      
+        const grouped = response.data.reduce((acc, curr) => {
+          const { ID_Cocktail, Ingredient_ID, Quantite } = curr;
+          if (!acc[ID_Cocktail]) {
+            acc[ID_Cocktail] = [];
+          }
+          acc[ID_Cocktail].push({ Ingredient_ID, Quantite });
+          return acc;
+        }, {});
+
+        const result = Object.keys(grouped).map(ID_Cocktail => ({
+          ID_Cocktail,
+          ingredients: grouped[ID_Cocktail]
+        }));
+        
+        for (const cocktail of result) {
+          let isAllIngredientsAvailable = true;
+          for (const ingredient of cocktail.ingredients) {
+            if (!this.availableIngredients.includes(ingredient.Ingredient_ID)) {
+              isAllIngredientsAvailable = false;
+              break;
+            }
+          }
+          if (isAllIngredientsAvailable) {
+            console.log(cocktail);
+            try {
+              const response = await axios.put(`http://localhost:8888/api/V1/cocktail/${cocktail.ID_Cocktail}`, {
+                Est_Disponible: 1
+              });
+            } catch (error) {
+              console.error("error :" + error)
+            }
+          }else{
+            try {
+              const response = await axios.put(`http://localhost:8888/api/V1/cocktail/${cocktail.ID_Cocktail}`, {
+                Est_Disponible: 0
+              });
+            } catch (error) {
+              console.error("error :" + error)
+            }
+          }
+        }
+
+
+        //AJOUTER UPDATE COCKTAIL
+        //Laisser l'alerte à la toute fin d'execution
+        if (this.activeCount >= 10) {
+          const alert = await alertController.create({
+            header: 'Oh doucement malheureux',
+            message: 'Le nombre maximal d\'ingrédients sélectionnés est atteint !',
+            buttons: ['OK']
+          });
+          await alert.present();
+          return;
+        }
+      } catch (error) {
+        console.error(error)
+      }
     }
 
 
