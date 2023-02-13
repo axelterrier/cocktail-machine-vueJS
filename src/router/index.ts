@@ -4,43 +4,61 @@ import TabsPage from '../views/TabsPage.vue'
 import RegisterView from '../views/RegisterView.vue'
 import LoginView from '../views/LoginView.vue'
 
-const routes: Array<RouteRecordRaw> = [
-  {
-    path: '/',
-    component: RegisterView
-  },
-  {
-    path: '/login',
-    component: LoginView
-  },
-  {
-    path: '/tabs/',
-    component: TabsPage,
-    children: [
-      {
-        path: '',
-        redirect: '/tabs/tab2'
-      },
-      {
-        path: 'tab1',
-        component: () => import('@/views/Tab1Page.vue'),
-        name: 'Tab1Page'
-      },
-      {
-        path: 'tab2',
-        component: () => import('@/views/Tab2Page.vue')
-      },
-      {
-        path: 'tab3',
-        component: () => import('@/views/Tab3Page.vue')
-      }
-    ]
-  }
-]
-
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
-  routes
+  routes: [
+    {
+      path: '/',
+      component: RegisterView
+    },
+    {
+      path: '/login',
+      component: LoginView
+    },
+    {
+      path: '/cocktail/:id',
+      component: () => import('@/views/CocktailView.vue'),
+      name: 'CocktailView'
+    },
+    {
+      path: '/settings/stats',
+      component: () => import('@/views/StatsView.vue'),
+      name: 'StatsView'
+    },
+    {
+      path: '/tabs/',
+      component: TabsPage,
+      children: [
+        {
+          path: '',
+          redirect: '/tabs/tab2'
+        },
+        {
+          path: 'tab1',
+          component: () => import('@/views/IngredientsView.vue'),
+          name: 'IngredientView'
+        },
+        {
+          path: 'tab2',
+          component: () => import('@/views/CocktailsView.vue')
+        },
+        {
+          path: 'tab3',
+          component: () => import('@/views/SettingsView.vue')
+        }
+      ],
+      beforeEnter: (to, from, next) => {
+        const token = localStorage.getItem("token");
+        if (token) {
+          next();
+        } else {
+          next({
+            path: "/login",
+          });
+        }
+      }
+    }
+  ]
 })
 
 export default router

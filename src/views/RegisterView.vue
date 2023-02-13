@@ -163,6 +163,8 @@ export default defineComponent({
           prenom: this.prenom,
           password: this.password
         });
+
+        this.router.push({ path: '/tabs/tab2' });
       } catch (error) {
         console.error(error);
         const presentAlert = async () => {

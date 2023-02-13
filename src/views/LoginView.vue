@@ -123,12 +123,13 @@ export default {
                         await alert.present();
                     };
                     presentAlert();
-                } else {
-                    console.log(`Token : ${token}`);
+                }
+            }else{
+                console.log(`Token : ${token}`);
                     // Stocker le token dans le localStorage pour une utilisation ultérieure
                     localStorage.setItem('token', token);
                     //REDIRECT
-                }
+                    this.router.push({ path: '/tabs/tab2' });
             }
         },
         goToRegister() {

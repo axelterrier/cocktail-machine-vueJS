@@ -1,25 +1,27 @@
 [
     {
-        "ID_Ingredient": 0,
-        "Ingredient_Name": "Absinthe",
-        "Viscosite": 1,
-        "Taux_Alcool": 60,
-        "Est_Disponible": 2,
-        "Image_Url": {
-            "type": "Buffer",
-            "data": []
-        },
-        "Pompe": null
-    },
-    {
         "ID_Ingredient": 1,
         "Ingredient_Name": "Amaretto",
         "Viscosite": 1,
         "Taux_Alcool": 18,
-        "Est_Disponible": 0,
+        "Est_Disponible": 1,
         "Image_Url": {
             "type": "Buffer",
-            "data": []
+            "data": [
+            ]
+        },
+        "Pompe": null
+    },
+    {
+        "ID_Ingredient": 4,
+        "Ingredient_Name": "Baileys",
+        "Viscosite": 1,
+        "Taux_Alcool": 17,
+        "Est_Disponible": 1,
+        "Image_Url": {
+            "type": "Buffer",
+            "data": [
+            ]
         },
         "Pompe": null
     }
